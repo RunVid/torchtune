@@ -19,6 +19,25 @@ the qwen2_7b model builder uses the qwen2 component builder to create the
 qwen2 7B model.
 """
 
+def qwen25_14b() -> TransformerDecoder:
+    """
+    Builder for creating a Qwen2 model initialized w/ the default 14B parameter values
+    from https://huggingface.co/Qwen/Qwen2.5-14B-Instruct by yurun
+    Returns:
+        TransformerDecoder: Instantiation of Qwen2 14B model
+    """
+    return qwen2(
+        vocab_size=152064,
+        num_layers=48,  #"num_hidden_layers": 48,
+        num_heads=40,  #"num_attention_heads": 40,
+        num_kv_heads=8, #"num_key_value_heads": 8,
+        embed_dim=5120, #"hidden_size": 5120,
+        intermediate_dim=13824, #"intermediate_size": 13824,
+        max_seq_len=32768, #"max_position_embeddings": 32768,
+        attn_dropout=0.0,
+        norm_eps=1e-06, #"rms_norm_eps": 1e-06,
+        rope_base=1000000.0, #"rope_theta": 1000000.0,
+    )
 
 def qwen2_7b() -> TransformerDecoder:
     """

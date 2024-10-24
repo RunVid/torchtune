@@ -1,0 +1,91 @@
+# Config for single device full finetuning in full_finetune_single_device.py
+# using a Qwen2.5 14B
+#
+# This config assumes that you've run the following command before launching
+# this run:
+#   tune download Qwen/Qwen2.5-14B-Instruct --output-dir /tmp/Qwen2.5-14B-Instruct --ignore-patterns None
+#
+# The default config uses an optimizer from bitsandbytes. If you do not have it installed,
+# you can install it with
+#   pip install bitsandbytes
+#
+# To launch on a single device, run the following command from root:
+#   tune run full_finetune_single_device --config qwen2/14B_full_single_device
+#
+# You can add specific overrides through the command line. For example
+# to override the checkpointer directory while launching training
+# you can run:
+#   tune run full_finetune_single_device --config qwen2/14B_full_single_device checkpointer.checkpoint_dir=<YOUR_CHECKPOINT_DIR>
+#
+# This config works only for training on single device.
+
+# Tokenizer
+tokenizer:
+  _component_: torchtune.models.qwen2.qwen2_tokenizer
+  path: /home/ubuntu/workspace/Qwen2.5-14B-Instruct/vocab.json
+  merges_file: /home/ubuntu/workspace/Qwen2.5-14B-Instruct/merges.txt
+  max_seq_len: 4096
+
+# Dataset
+dataset:
+  _component_: torchtune.datasets.chat_dataset
+  source: /home/ubuntu/workspace/dataset
+  conversation_style: openai
+  conversation_column: messages
+  split: train
+  train_on_input: False
+seed: null
+shuffle: True
+
+# Model Arguments
+model:
+  _component_: torchtune.models.qwen2.qwen25_14b
+
+checkpointer:
+  _component_: torchtune.training.FullModelTorchTuneCheckpointer
+  checkpoint_dir: /home/ubuntu/workspace/Qwen2.5-14B-Instruct
+  checkpoint_files: [
+    hf_model_0001.pt,
+    hf_model_0002.pt,
+    hf_model_0003.pt,
+    hf_model_0004.pt,
+    hf_model_0005.pt,
+    hf_model_0006.pt,
+    hf_model_0007.pt,
+    hf_model_0008.pt
+  ]
+  recipe_checkpoint: null
+  output_dir: /tmp/Qwen2.5-14B-Instruct-ft
+  model_type: QWEN2
+resume_from_checkpoint: False
+
+# Fine-tuning arguments
+batch_size: 5
+epochs: 6
+optimizer:
+  _component_: bitsandbytes.optim.PagedAdamW8bit
+  lr: 5e-6
+optimizer_in_bwd: True
+loss:
+  _component_: torch.nn.CrossEntropyLoss
+max_steps_per_epoch: null
+gradient_accumulation_steps: 1
+compile: False
+
+# Training environment
+device: cuda
+
+# Memory management
+enable_activation_checkpointing: True
+
+# Reduced precision
+dtype: bf16
+
+# Logging
+metric_logger:
+  _component_: torchtune.training.metric_logging.WandBLogger
+  log_dir: torchtune
+output_dir: /tmp/Qwen2.5-14B-Instruct-ft
+log_every_n_steps: 1
+log_peak_memory_stats: True
+

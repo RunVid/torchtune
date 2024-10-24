@@ -13,6 +13,7 @@ from ._model_builders import (
     qwen2_0_5b,
     qwen2_1_5b,
     qwen2_7b,
+    qwen25_14b,
     qwen2_tokenizer,
 )
 from ._positional_embeddings import Qwen2RotaryPositionalEmbeddings
@@ -20,6 +21,7 @@ from ._tokenizer import Qwen2Tokenizer
 
 __all__ = [
     "qwen2_7b",
+    "qwen25_14b",
     "qwen2_0_5b",
     "qwen2_1_5b",
     "qwen2_tokenizer",

@@ -22,15 +22,52 @@ QWEN2_SPECIAL_TOKENS = {
     "<|endoftext|>": 151643,
     "<|im_start|>": 151644,
     "<|im_end|>": 151645,
+    "<|object_ref_start|>": 151646,
+    "<|object_ref_end|>": 151647,
+    "<|box_start|>": 151648,
+    "<|box_end|>": 151649,
+    "<|quad_start|>": 151650,
+    "<|quad_end|>": 151651,
+    "<|vision_start|>": 151652,
+    "<|vision_end|>": 151653,
+    "<|vision_pad|>": 151654,
+    "<|image_pad|>": 151655,
+    "<|video_pad|>": 151656,
+    "<tool_call>": 151657,
+    "</tool_call>": 151658,
+    "<|fim_prefix|>": 151659,
+    "<|fim_middle|>": 151660,
+    "<|fim_suffix|>": 151661,
+    "<|fim_pad|>": 151662,
+    "<|repo_name|>": 151663,
+    "<|file_sep|>": 151664,
 }
 
 
 ENDOFTEXT = "<|endoftext|>"
 IM_START = "<|im_start|>"
 IM_END = "<|im_end|>"
+OBJECT_REF_START = "<|object_ref_start|>"
+OBJECT_REF_END = "<|object_ref_end|>"
+BOX_START = "<|box_start|>"
+BOX_END = "<|box_end|>"
+QUAD_START = "<|quad_start|>"
+QUAD_END = "<|quad_end|>"
+VISION_START = "<|vision_start|>"
+VISION_END = "<|vision_end|>"
+VISION_PAD = "<|vision_pad|>"
+IMAGE_PAD = "<|image_pad|>"
+VIDEO_PAD = "<|video_pad|>"
+TOOL_CALL_START = "<tool_call>"
+TOOL_CALL_END = "</tool_call>"
+FIM_PREFIX = "<|fim_prefix|>"
+FIM_MIDDLE = "<|fim_middle|>"
+FIM_SUFFIX = "<|fim_suffix|>"
+FIM_PAD = "<|fim_pad|>"
+REPO_NAME = "<|repo_name|>"
+FILE_SEP = "<|file_sep|>"
 
-DEFAULT_QWEN2_TOKENIZER_BPE_CACHE_SIZE = 151646
-
+DEFAULT_QWEN2_TOKENIZER_BPE_CACHE_SIZE = 151665
 
 @lru_cache()
 def bytes_to_unicode():
@@ -76,8 +113,6 @@ def get_pairs(word):
 class Qwen2Tokenizer(ModelTokenizer):
     """This class construct a Qwen2 tokenizer, based on GPT-2 byte-level BPE tokenization.
 
-    See <https://github.com/huggingface/transformers/blob/v4.40.1/src/transformers/models/qwen2/tokenization_qwen2.py>.
-
     Args:
         path (str): Path to vocab.json file.
         merges_file (str): Path to merges.txt file.
@@ -103,11 +138,11 @@ class Qwen2Tokenizer(ModelTokenizer):
         bos_token (Optional[str]): The beginning of sequence token. Defaults to None.
         eos_token (str): The end of sequence token. Defaults to ``<|endoftext|>``.
         pad_token (Optional[str]): The token used for padding. Defaults to ``<|endoftext|>``.
-        bpe_cache_size (int): BPE token cache size in Qwen2Tokenizer.
+        bpe_cache_size (int): BPE token cache size in Qwen2.5Tokenizer.
             NOTE: large cache size will speed up tokenization, but the cache object will get really
             large for long running processes (esp. for texts of language that do not use space between
             word, e.g. Chinese); technically not a memory leak but appears as one.
-            By default, we set the cache size equals to size of the official Qwen2 tokenizer.
+            By default, we set the cache size equals to size of the official Qwen2.5 tokenizer.
 
     Example:
         >>> tokenizer = Qwen2Tokenizer(path="/path/to/vocab.json", merges_file="/path/to/merges.txt")
@@ -245,7 +280,6 @@ class Qwen2Tokenizer(ModelTokenizer):
             <https://github.com/huggingface/transformers/blob/v4.41.2/src/transformers/tokenization_utils.py#L541> and
             <https://github.com/huggingface/transformers/blob/v4.41.2/src/transformers/models/qwen2/tokenization_qwen2.py#L262>.
         """
-
         text = unicodedata.normalize("NFC", text)
 
         tokens = self._pattern_split_special_tokens.split(text)
